@@ -1,30 +1,30 @@
-# `@apricote/nest-pg-boss`
+# `@prohst-tech/nest-pg-boss`
 
 <p align="center">
     Use <a href="https://github.com/timgit/pg-boss" target="_blank">pg-boss</a> in your Nest.js service!
 <p align="center">
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/@apricote/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/v/@apricote/nest-pg-boss.svg" alt="NPM Version"/></a>
-    <a href="https://www.npmjs.com/package/@apricote/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/l/@apricote/nest-pg-boss.svg" alt="Package License"/></a>
-    <a href="https://www.npmjs.com/package/@apricote/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/dm/@apricote/nest-pg-boss.svg" alt="NPM Downloads"/></a>
-    <a href="https://github.com/apricote/nest-pg-boss/actions?query=workflow%3A%22CI%22" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/apricote/nest-pg-boss/ci.yaml?branch=main" alt="CI Status"/></a>
+    <a href="https://www.npmjs.com/package/@prohst-tech/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/v/@prohst-tech/nest-pg-boss.svg" alt="NPM Version"/></a>
+    <a href="https://www.npmjs.com/package/@prohst-tech/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/l/@prohst-tech/nest-pg-boss.svg" alt="Package License"/></a>
+    <a href="https://www.npmjs.com/package/@prohst-tech/nest-pg-boss" target="_blank"><img src="https://img.shields.io/npm/dm/@prohst-tech/nest-pg-boss.svg" alt="NPM Downloads"/></a>
+    <a href="https://github.com/prohst-tech/nest-pg-boss/actions?query=workflow%3A%22CI%22" target="_blank"><img src="https://img.shields.io/github/actions/workflow/status/prohst-tech/nest-pg-boss/ci.yaml?branch=main" alt="CI Status"/></a>
 </p>
 
 ## Installation
 
 ```bash
-npm install @apricote/nest-pg-boss
+npm install @prohst-tech/nest-pg-boss
 ```
 
 ## Usage
 
 ### Setup
 
-To begin using `@apricote/nest-pg-boss`, initialize the root module:
+To begin using `@prohst-tech/nest-pg-boss`, initialize the root module:
 
 ```ts
-import { PGBossModule } from "@apricote/nest-pg-boss";
+import { PGBossModule } from "@prohst-tech/nest-pg-boss";
 
 // app.module.ts
 @Module({
@@ -53,7 +53,7 @@ For a list of available settings, check out the [pg-boss docs](https://github.co
 
 ```typescript
 // jobs.ts
-import { createJob } from "@apricote/nest-pg-boss"
+import { createJob } from "@prohst-tech/nest-pg-boss"
 
 interface IFoobarJobData {
   foo: string
@@ -67,7 +67,7 @@ const FoobarJob = createJob<IFoobarJobData>("foobar")
 
 ```typescript
 // module.ts
-import { PGBossModule } from "@apricote/nest-pg-boss";
+import { PGBossModule } from "@prohst-tech/nest-pg-boss";
 import { FoobarService } from "./service.ts";
 
 @Module({
@@ -80,7 +80,7 @@ class FoobarModule {}
 
 ```typescript
 // service.ts
-import { JobService } from "@apricote/nest-pg-boss";
+import { JobService } from "@prohst-tech/nest-pg-boss";
 import { FoobarJob, IFoobarJobData } from "./jobs.ts";
 
 @Injectable()
@@ -91,7 +91,7 @@ class FoobarService {
   ) {}
 
   async sendJob() {
-    await this.foobarJobService.send({ foo: "oof", bar: true }, {});
+    await this.foobarJobService.send({ foo: "oof", bar: true });
   }
 }
 ```
@@ -134,4 +134,4 @@ $ npm run test:cov
 
 ## License
 
-`@apricote/nest-pg-boss` is [MIT licensed](LICENSE).
+`@prohst-tech/nest-pg-boss` is [MIT licensed](LICENSE).

@@ -10,7 +10,6 @@ export function getJobToken(jobName: string): string {
 export function handleRetry(
   retryAttempts = 9,
   retryDelay = 3000,
-  verboseRetryLog = false,
   toRetry?: (err: any) => boolean,
 ): <T>(source: Observable<T>) => Observable<T> {
   return <T>(source: Observable<T>) =>
@@ -21,15 +20,14 @@ export function handleRetry(
             if (toRetry && !toRetry(error)) {
               throw error;
             }
-            const verboseMessage = verboseRetryLog
-              ? ` Message: ${error.message}.`
-              : "";
 
             logger.error(
-              `Unable to connect to the database.${verboseMessage} Retrying (${
-                errorCount + 1
-              })...`,
-              error.stack,
+              "Unable to connect to the database, retrying",
+              {
+                error,
+                retryAttempts,
+                retryDelay,
+              },
             );
             if (errorCount + 1 >= retryAttempts) {
               throw error;

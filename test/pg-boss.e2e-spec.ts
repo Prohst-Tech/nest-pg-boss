@@ -43,18 +43,11 @@ describe("PGBossModule (e2e)", () => {
   let foobarService: FoobarService;
 
   beforeAll(async () => {
-    jest.setTimeout(60_000);
     postgres = await new PostgreSqlContainer().start();
   });
 
   afterAll(async () => {
-    if (postgres) {
-      // Even after calling `app.close()` pg-boss does not properly close the
-      // job workers, throwing unexpected exceptions once the database is stopped.
-      // After 10 seconds the remaining workers have all stopped.
-      await sleep(10_000);
-      await postgres.stop();
-    }
+    await postgres.stop();
   });
 
   beforeEach(async () => {
@@ -66,6 +59,10 @@ describe("PGBossModule (e2e)", () => {
           database: postgres.getDatabase(),
           user: postgres.getUsername(),
           password: postgres.getPassword(),
+
+          retryLimit: 10,
+          retryDelay: 1,
+          retryBackoff: false,
         }),
         PGBossModule.forJobs([FoobarJob]),
       ],
@@ -82,22 +79,18 @@ describe("PGBossModule (e2e)", () => {
   });
 
   it("handles a Job", async () => {
-    jest.setTimeout(60_000);
-
     await foobarService.sendJob();
-
     // Wait for processing
     let lastError: Error | null = null;
 
-    for (let retry = 0; retry < 25; retry++) {
+    for (let retry = 0; retry < 10; retry++) {
       try {
         expect(foobarService.datastore).toHaveLength(1);
-
         lastError = null;
         break;
       } catch (err) {
         lastError = err;
-        await sleep(2_000);
+        await sleep(1_000);
       }
     }
 

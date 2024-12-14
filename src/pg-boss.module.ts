@@ -91,7 +91,6 @@ export class PGBossModule
         handleRetry(
           options.retryAttempts,
           options.retryDelay,
-          options.verboseRetryLog,
           options.toRetry,
         ),
       ),
@@ -117,13 +116,7 @@ export class PGBossModule
   }
 
   async onModuleDestroy(): Promise<void> {
-    try {
-      if (this.instance) {
-        await this.instance.stop();
-      }
-    } catch (e) {
-      this.logger.error(e?.message);
-    }
+    await this.instance.stop();
   }
 
   private async setupWorkers() {
@@ -137,14 +130,17 @@ export class PGBossModule
 
     await Promise.all(
       jobHandlers.map(async (handler) => {
+        const isBatch = handler.metadata.workOptions?.batchSize;
+
+        await this.instance.createQueue(handler.metadata.jobName);
         const workerID = await this.instance.work(
           handler.metadata.jobName,
           handler.metadata.workOptions,
-          handler.callback,
+          isBatch ? handler.callback : ([job]: PGBoss.Job<unknown>[]) => handler.callback(job),
         );
         this.logger.log(
-          { workerID, jobName: handler.metadata.jobName },
           "Registered Worker",
+          { workerID, jobName: handler.metadata.jobName },
         );
       }),
     );

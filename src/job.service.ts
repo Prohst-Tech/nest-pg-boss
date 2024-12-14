@@ -18,57 +18,46 @@ export class JobService<JobData extends object> {
 
   async send(
     data: JobData,
-    options: PGBoss.SendOptions,
+    options?: PGBoss.SendOptions,
   ): Promise<string | null> {
-    return this.pgBoss.send(this.name, data, options);
+    return this.pgBoss.send(this.name, data, options ?? {});
   }
 
   async sendAfter(
-    data: JobData,
-    options: PGBoss.SendOptions,
     date: Date | string | number,
+    data: JobData,
+    options?: PGBoss.SendOptions,
   ): Promise<string | null> {
     // sendAfter has three overloads for all date variants we accept
-    return this.pgBoss.sendAfter(this.name, data, options, date as any);
-  }
-
-  async sendOnce(
-    data: JobData,
-    options: PGBoss.SendOptions,
-    key: string,
-  ): Promise<string | null> {
-    return this.pgBoss.sendOnce(this.name, data, options, key);
-  }
-
-  async sendSingleton(
-    data: JobData,
-    options: PGBoss.SendOptions,
-  ): Promise<string | null> {
-    return this.pgBoss.sendSingleton(this.name, data, options);
+    return this.pgBoss.sendAfter(this.name, data, options ?? {}, date as any);
   }
 
   async sendThrottled(
     data: JobData,
-    options: PGBoss.SendOptions,
-    seconds: number,
-    key?: string,
+    params: {
+      seconds: number,
+      key?: string,
+    },
+    options?: PGBoss.SendOptions,
   ): Promise<string | null> {
-    if (key != undefined) {
-      return this.pgBoss.sendThrottled(this.name, data, options, seconds, key);
+    if (params.key != undefined) {
+      return this.pgBoss.sendThrottled(this.name, data, options ?? {}, params.seconds, params.key);
     }
-    return this.pgBoss.sendThrottled(this.name, data, options, seconds);
+    return this.pgBoss.sendThrottled(this.name, data, options ?? {}, params.seconds);
   }
 
   async sendDebounced(
     data: JobData,
-    options: PGBoss.SendOptions,
-    seconds: number,
-    key?: string,
+    params: {
+      seconds: number,
+      key?: string,
+    },
+    options?: PGBoss.SendOptions,
   ): Promise<string | null> {
-    if (key != undefined) {
-      return this.pgBoss.sendDebounced(this.name, data, options, seconds, key);
+    if (params.key != undefined) {
+      return this.pgBoss.sendDebounced(this.name, data, options ?? {}, params.seconds, params.key);
     }
-    return this.pgBoss.sendDebounced(this.name, data, options, seconds);
+    return this.pgBoss.sendDebounced(this.name, data, options ?? {}, params.seconds);
   }
 
   async insert(jobs: Omit<PGBoss.JobInsert<JobData>, "name">[]): Promise<any> {
@@ -79,8 +68,8 @@ export class JobService<JobData extends object> {
     return this.pgBoss.insert(_jobs);
   }
 
-  async schedule(cron: string, data: JobData, options: PGBoss.ScheduleOptions) {
-    return this.pgBoss.schedule(this.name, cron, data, options);
+  async schedule(cron: string, data: JobData, options?: PGBoss.ScheduleOptions) {
+    return this.pgBoss.schedule(this.name, cron, data, options ?? {});
   }
 
   async unschedule() {
@@ -89,11 +78,11 @@ export class JobService<JobData extends object> {
 }
 
 export interface WorkHandler<ReqData> {
-  (job?: PGBoss.Job<ReqData>): Promise<void>;
+  (job: PGBoss.Job<ReqData>): Promise<void>;
 }
 
 export interface WorkHandlerBatch<ReqData> {
-  (jobs?: PGBoss.Job<ReqData>[]): Promise<void>;
+  (jobs: PGBoss.Job<ReqData>[]): Promise<void>;
 }
 
 interface MethodDecorator<PropertyType> {

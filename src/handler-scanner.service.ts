@@ -4,12 +4,10 @@ import { Injectable as InjectableInterface } from "@nestjs/common/interfaces";
 import { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import { PG_BOSS_JOB_METADATA } from "./pg-boss.constants";
 import { HandlerMetadata } from "./interfaces/handler-metadata.interface";
-import type { WorkHandler } from "pg-boss";
+import type { WorkHandler, Job } from "pg-boss";
 
 @Injectable()
 export class HandlerScannerService {
-  private readonly logger = new Logger(this.constructor.name);
-
   constructor(
     private readonly metadataScanner: MetadataScanner,
     public readonly modulesContainer: ModulesContainer,
@@ -30,7 +28,7 @@ export class HandlerScannerService {
 
   getJobHandlers(): {
     metadata: HandlerMetadata;
-    callback: WorkHandler<unknown>;
+    callback: <JobParams extends Job<unknown>>(job: JobParams[] | JobParams) => Promise<any>;
   }[] {
     // See https://github.com/owl1n/nest-queue/blob/master/src/queue.provider.ts
     const modules = [...this.modulesContainer.values()];
@@ -57,7 +55,7 @@ export class HandlerScannerService {
             }
 
             const callback = (
-              instance as Record<typeof methodName, WorkHandler<unknown>>
+              instance as Record<typeof methodName, <JobParams extends Job<unknown>>(job: JobParams[] | JobParams) => Promise<any>>
             )[methodName].bind(instance);
 
             return {
@@ -74,7 +72,5 @@ function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
   if (value === null || value === undefined) {
     return false;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const testDummy: TValue = value;
   return true;
 }
