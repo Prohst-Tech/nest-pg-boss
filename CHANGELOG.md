@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0](https://github.com/Prohst-Tech/nest-pg-boss/compare/v0.0.0...v0.1.0) (2024-12-14)
+## [0.4.0](https://github.com/Prohst-Tech/nest-pg-boss/compare/v0.0.0...v0.1.0) (2024-12-14)
 
 
 ### Features

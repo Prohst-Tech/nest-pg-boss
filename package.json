@@ -1,6 +1,6 @@
 {
   "name": "@prohst-tech/nest-pg-boss",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Use pg-boss in your NestJS app",
   "author": "Prohst Tech",
   "license": "MIT",
