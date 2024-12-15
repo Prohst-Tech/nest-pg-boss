@@ -4,5 +4,5 @@ export interface HandlerMetadata {
   token: string;
   jobName: string;
   workOptions: WorkOptions;
-  createQueueOptions?: Queue;
+  createQueueOptions?: Omit<Queue, "name">;
 }

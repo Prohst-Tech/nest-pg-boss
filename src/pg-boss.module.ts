@@ -132,7 +132,10 @@ export class PGBossModule
       jobHandlers.map(async (handler) => {
         const isBatch = handler.metadata.workOptions?.batchSize;
 
-        await this.instance.createQueue(handler.metadata.jobName, handler.metadata.createQueueOptions);
+        await this.instance.createQueue(handler.metadata.jobName, {
+          name: handler.metadata.jobName,
+          ...handler.metadata.createQueueOptions,
+        });
         const workerID = await this.instance.work(
           handler.metadata.jobName,
           handler.metadata.workOptions,
