@@ -4,7 +4,7 @@ import { Injectable as InjectableInterface } from "@nestjs/common/interfaces";
 import { InstanceWrapper } from "@nestjs/core/injector/instance-wrapper";
 import { PG_BOSS_JOB_METADATA } from "./pg-boss.constants";
 import { HandlerMetadata } from "./interfaces/handler-metadata.interface";
-import type { WorkHandler, Job } from "pg-boss";
+import type { Job } from "pg-boss";
 
 @Injectable()
 export class HandlerScannerService {

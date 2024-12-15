@@ -111,6 +111,7 @@ export interface Job<JobData extends object = any> {
 
 export const createJob = <JobData extends object>(
   name: string,
+  createQueueOptions?: PGBoss.Queue,
 ): Job<JobData> => {
   const token = getJobToken(name);
 
@@ -121,11 +122,12 @@ export const createJob = <JobData extends object>(
       inject: [PGBoss],
     },
     Inject: () => Inject(token),
-    Handle: (options: PGBoss.WorkOptions = {}) =>
+    Handle: (workOptions: PGBoss.WorkOptions = {}) =>
       SetMetadata<string, HandlerMetadata>(PG_BOSS_JOB_METADATA, {
         token,
         jobName: name,
-        workOptions: options,
+        workOptions,
+        createQueueOptions,
       }),
   };
 };
