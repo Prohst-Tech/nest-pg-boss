@@ -111,7 +111,7 @@ export interface Job<JobData extends object = any> {
 
 export const createJob = <JobData extends object>(
   name: string,
-  createQueueOptions?: PGBoss.Queue,
+  createQueueOptions?: Omit<PGBoss.Queue, "name">,
 ): Job<JobData> => {
   const token = getJobToken(name);
 
