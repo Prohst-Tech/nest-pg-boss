@@ -126,16 +126,32 @@ export class PGBossModule
       );
     }
 
-    const jobHandlers = this.handlerScannerService.getJobHandlers();
+    // Sort job handlers by whether they have a dead letter queue.
+    // This is to ensure that the dead letter queues are created before the job queues,
+    // however this will not solve the issue if a dead letter queue has a dead letter queue
+    // on it, but why would that happen. It's a rhetorical question, of course it will happen,
+    // so if you're reading this, don't put a dead letter queue on a dead letter queue,
+    // it doesn't make sense.
+    const jobHandlers = [...this.handlerScannerService.getJobHandlers()].sort((a, b) => {
+      if (a.metadata.createQueueOptions?.deadLetter) {
+        return 1;
+      }
+      if (b.metadata.createQueueOptions?.deadLetter) {
+        return -1;
+      }
+      return 0;
+    });
+
+    for (const handler of jobHandlers) {
+      await this.instance.createQueue(handler.metadata.jobName, {
+        name: handler.metadata.jobName,
+        ...handler.metadata.createQueueOptions,
+      });
+    }
 
     await Promise.all(
       jobHandlers.map(async (handler) => {
         const isBatch = handler.metadata.workOptions?.batchSize;
-
-        await this.instance.createQueue(handler.metadata.jobName, {
-          name: handler.metadata.jobName,
-          ...handler.metadata.createQueueOptions,
-        });
         const workerID = await this.instance.work(
           handler.metadata.jobName,
           handler.metadata.workOptions,
